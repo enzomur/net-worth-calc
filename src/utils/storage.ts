@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js';
 import { FinancialData } from '@/types';
+import { validateFinancialData } from '@/schemas/validation';
 
 const STORAGE_KEY = 'net-worth-data';
 const ENCRYPTION_KEY_SETTING = 'net-worth-encryption';
@@ -37,9 +38,11 @@ export function loadData(): FinancialData | null {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
 
+  let parsed: unknown;
+
   try {
     // Try parsing as plain JSON first
-    return JSON.parse(raw) as FinancialData;
+    parsed = JSON.parse(raw);
   } catch {
     // Try decrypting
     const encKey = getEncryptionKey();
@@ -48,11 +51,14 @@ export function loadData(): FinancialData | null {
       const bytes = CryptoJS.AES.decrypt(raw, encKey);
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
       if (!decrypted) return null;
-      return JSON.parse(decrypted) as FinancialData;
+      parsed = JSON.parse(decrypted);
     } catch {
       return null;
     }
   }
+
+  // Validate the parsed data with Zod
+  return validateFinancialData(parsed);
 }
 
 export function clearData(): void {

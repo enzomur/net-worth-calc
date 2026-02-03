@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { Goal } from '@/types';
-import { formatCurrency, getGoalProgress, getMonthlyTargetSavings, sanitizeNumber } from '@/utils/calculations';
+import { formatCurrency, getGoalProgress, getMonthlyTargetSavings } from '@/utils/calculations';
+import { validateGoalInput, parseMonetaryInput } from '@/schemas/validation';
 
 interface Props {
   goal: Goal | null;
@@ -14,11 +15,25 @@ export default function GoalSetting({ goal, netWorth, onSetGoal }: Props) {
   const [editing, setEditing] = useState(false);
   const [targetStr, setTargetStr] = useState(goal?.targetNetWorth?.toString() ?? '');
   const [deadline, setDeadline] = useState(goal?.deadline ?? '');
+  const [error, setError] = useState<string | null>(null);
 
   function handleSave() {
-    const target = sanitizeNumber(targetStr);
-    if (target <= 0 || !deadline) return;
-    onSetGoal({ targetNetWorth: target, deadline, createdAt: new Date().toISOString() });
+    setError(null);
+    const target = parseMonetaryInput(targetStr);
+
+    const input = {
+      targetNetWorth: target,
+      deadline,
+    };
+
+    const result = validateGoalInput(input);
+    if (!result.success) {
+      setError(result.error);
+      console.error('Goal validation failed:', result.error);
+      return;
+    }
+
+    onSetGoal({ ...result.data, createdAt: new Date().toISOString() });
     setEditing(false);
   }
 
@@ -45,6 +60,13 @@ export default function GoalSetting({ goal, netWorth, onSetGoal }: Props) {
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <span>🎯</span> Set Your Goal
         </h2>
+
+        {error && (
+          <div className="mb-3 px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <input
             type="text"
@@ -65,7 +87,7 @@ export default function GoalSetting({ goal, netWorth, onSetGoal }: Props) {
           <button onClick={handleSave} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors">
             Save
           </button>
-          <button onClick={() => setEditing(false)} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
+          <button onClick={() => { setEditing(false); setError(null); }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
             Cancel
           </button>
         </div>
@@ -84,7 +106,7 @@ export default function GoalSetting({ goal, netWorth, onSetGoal }: Props) {
           <span>🎯</span> Goal Progress
         </h2>
         <div className="flex gap-2">
-          <button onClick={() => { setTargetStr(goal!.targetNetWorth.toString()); setDeadline(goal!.deadline); setEditing(true); }} className="text-xs text-slate-400 hover:text-white">Edit</button>
+          <button onClick={() => { setTargetStr(goal!.targetNetWorth.toString()); setDeadline(goal!.deadline); setEditing(true); setError(null); }} className="text-xs text-slate-400 hover:text-white">Edit</button>
           <button onClick={() => onSetGoal(null)} className="text-xs text-slate-400 hover:text-red-400">Remove</button>
         </div>
       </div>

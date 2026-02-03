@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { Liability } from '@/types';
-import { formatCurrency, sanitizeNumber } from '@/utils/calculations';
+import { formatCurrency } from '@/utils/calculations';
+import { validateLiabilityInput, parseMonetaryInput } from '@/schemas/validation';
 
 const PRESETS: { name: string; category: Liability['category'] }[] = [
   { name: 'Mortgage', category: 'mortgage' },
@@ -24,11 +25,26 @@ export default function LiabilityInput({ liabilities, totalLiabilities, onAdd, o
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
   const [category, setCategory] = useState<Liability['category']>('credit-cards');
+  const [error, setError] = useState<string | null>(null);
 
   function handleAdd() {
-    const numVal = sanitizeNumber(value);
-    if (!name.trim() || numVal <= 0) return;
-    onAdd({ name: name.trim(), value: numVal, category });
+    setError(null);
+    const numVal = parseMonetaryInput(value);
+
+    const input = {
+      name: name.trim(),
+      value: numVal,
+      category,
+    };
+
+    const result = validateLiabilityInput(input);
+    if (!result.success) {
+      setError(result.error);
+      console.error('Liability validation failed:', result.error);
+      return;
+    }
+
+    onAdd(result.data);
     setName('');
     setValue('');
   }
@@ -36,6 +52,7 @@ export default function LiabilityInput({ liabilities, totalLiabilities, onAdd, o
   function handlePreset(preset: typeof PRESETS[number]) {
     setName(preset.name);
     setCategory(preset.category);
+    setError(null);
   }
 
   return (
@@ -59,6 +76,12 @@ export default function LiabilityInput({ liabilities, totalLiabilities, onAdd, o
           </button>
         ))}
       </div>
+
+      {error && (
+        <div className="mb-3 px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+          {error}
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 mb-4">
         <input
