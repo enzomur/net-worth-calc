@@ -1,15 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Asset, Liability, NetWorthSnapshot, Goal, FinancialData } from '@/types';
+import { Asset, Liability, NetWorthSnapshot, Goal, FinancialData, PercentileResult } from '@/types';
 import { calculateNetWorth, getMilestones, generateInsights, getHealthLevel, getHealthPercent } from '@/utils/calculations';
 import { saveData, loadData } from '@/utils/storage';
+import { calculatePercentile } from '@/utils/percentile';
 
 const DEFAULT_DATA: FinancialData = {
   assets: [],
   liabilities: [],
   history: [],
   goal: null,
+  age: null,
 };
 
 export function useNetWorth() {
@@ -35,6 +37,11 @@ export function useNetWorth() {
   const insights = useMemo(() => generateInsights(data.assets, data.liabilities), [data.assets, data.liabilities]);
   const healthLevel = useMemo(() => getHealthLevel(netWorth, totalAssets, totalLiabilities), [netWorth, totalAssets, totalLiabilities]);
   const healthPercent = useMemo(() => getHealthPercent(netWorth, totalAssets, totalLiabilities), [netWorth, totalAssets, totalLiabilities]);
+
+  const percentileResult = useMemo((): PercentileResult | null => {
+    if (data.age === null) return null;
+    return calculatePercentile(netWorth, data.age);
+  }, [netWorth, data.age]);
 
   const addAsset = useCallback((asset: Omit<Asset, 'id'>) => {
     setData(prev => ({
@@ -96,11 +103,16 @@ export function useNetWorth() {
     setData(prev => ({ ...prev, goal }));
   }, []);
 
+  const setAge = useCallback((age: number | null) => {
+    setData(prev => ({ ...prev, age }));
+  }, []);
+
   return {
     assets: data.assets,
     liabilities: data.liabilities,
     history: data.history,
     goal: data.goal,
+    age: data.age,
     totalAssets,
     totalLiabilities,
     netWorth,
@@ -108,6 +120,7 @@ export function useNetWorth() {
     insights,
     healthLevel,
     healthPercent,
+    percentileResult,
     loaded,
     addAsset,
     removeAsset,
@@ -117,5 +130,6 @@ export function useNetWorth() {
     updateLiability,
     saveSnapshot,
     setGoal,
+    setAge,
   };
 }

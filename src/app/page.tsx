@@ -12,6 +12,8 @@ import GoalSetting from '@/components/GoalSetting';
 import HistoryChart from '@/components/HistoryChart';
 import BudgetRecommendations from '@/components/BudgetRecommendations';
 import ExportButtons from '@/components/ExportButtons';
+import AgeInput from '@/components/AgeInput';
+import PercentileDisplay from '@/components/PercentileDisplay';
 
 export default function Home() {
   const nw = useNetWorth();
@@ -52,7 +54,14 @@ export default function Home() {
           healthLevel={nw.healthLevel}
           healthPercent={nw.healthPercent}
         />
+        <AgeInput age={nw.age} onAgeChange={nw.setAge} />
       </div>
+
+      {nw.percentileResult && (
+        <div className="mb-6">
+          <PercentileDisplay result={nw.percentileResult} />
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <GoalSetting goal={nw.goal} netWorth={nw.netWorth} onSetGoal={nw.setGoal} />

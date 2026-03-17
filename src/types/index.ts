@@ -30,6 +30,28 @@ export interface FinancialData {
   liabilities: Liability[];
   history: NetWorthSnapshot[];
   goal: Goal | null;
+  age: number | null;
+}
+
+export interface AgeBracket {
+  label: string;
+  minAge: number;
+  maxAge: number;
+  percentiles: {
+    p10: number;
+    p25: number;
+    p50: number;
+    p75: number;
+    p90: number;
+  };
+}
+
+export interface PercentileResult {
+  percentile: number;
+  bracketLabel: string;
+  medianNetWorth: number;
+  comparedToMedian: 'above' | 'below' | 'at';
+  insight: string;
 }
 
 export interface Milestone {

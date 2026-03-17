@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Net Worth Educator
+
+A personal finance tool that helps you calculate, understand, and track your net worth over time. Built for anyone who wants to take control of their financial health.
+
+## What It Does
+
+**Calculate Your Net Worth** — Add your assets (savings, investments, property) and liabilities (loans, credit cards, mortgages) to see your total net worth at a glance.
+
+**Learn Financial Basics** — Interactive education cards explain key concepts like assets vs. liabilities, emergency funds, debt management, and more.
+
+**See Where You Stand** — Enter your age to see how your net worth compares to others in your age bracket with percentile rankings based on real data.
+
+**Set Goals & Track Progress** — Set a net worth goal and save snapshots over time to visualize your progress with interactive charts.
+
+**Get Personalized Insights** — Receive tailored recommendations based on your financial situation, including budget suggestions and milestone tracking.
+
+**Export Your Data** — Download your financial summary as CSV or PDF for record-keeping or sharing with a financial advisor.
+
+## Features
+
+- Asset & liability tracking with categories
+- Real-time net worth calculation
+- Financial health score
+- Age-based percentile comparison
+- Goal setting with progress tracking
+- Historical snapshots with charts
+- Milestone achievements
+- Budget recommendations
+- CSV and PDF export
+- Fully client-side (your data stays in your browser)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd net-worth-calc
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Privacy
 
-To learn more about Next.js, take a look at the following resources:
+All data is stored locally in your browser using localStorage. Nothing is sent to any server. Your financial information never leaves your device.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org) — React framework
+- [TypeScript](https://www.typescriptlang.org) — Type safety
+- [Tailwind CSS](https://tailwindcss.com) — Styling
+- [Recharts](https://recharts.org) — Charts and visualizations
+- [Zod](https://zod.dev) — Data validation
+- [jsPDF](https://github.com/parallax/jsPDF) — PDF export
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

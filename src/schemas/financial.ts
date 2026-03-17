@@ -53,12 +53,16 @@ export const NetWorthSnapshotSchema = z.object({
   netWorth: z.number(),
 });
 
+// Age schema for percentile comparison
+export const AgeSchema = z.number().int().min(18).max(120);
+
 // Full financial data schema for localStorage validation
 export const FinancialDataSchema = z.object({
   assets: z.array(AssetSchema),
   liabilities: z.array(LiabilitySchema),
   history: z.array(NetWorthSnapshotSchema),
   goal: GoalSchema.nullable(),
+  age: AgeSchema.nullable().default(null),
 });
 
 // Type exports inferred from schemas
